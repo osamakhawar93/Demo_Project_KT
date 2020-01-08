@@ -1,0 +1,21 @@
+<div class="search-artists">
+  <div class="overlay"></div>
+  <p class="back-btn"><a href="/home">Back To Homepage</a></p>
+  <div class="content-on-top">
+  <p class="page-heading">Upcoming events for : <span class="artist-name">{{artistName}}</span></p>
+  <div class="row">
+    <ng-container *ngIf="!noEvents">
+      <div class="col-lg-3 col-md-4 col-sm-4" *ngFor="let event of events">
+          <div class="events-box">
+              <h4 class="event-head">Event Venue : <span>{{event.venue.name}}</span></h4>
+              <h4 class="event-head">Event Location: <span>{{event.venue.city}},{{event.venue.country}}</span></h4>
+              <p>Date : <span>{{event.datetime | date}}</span></p>
+          </div>
+      </div>
+    </ng-container>
+    <ng-container *ngIf="noEvents">
+        <p class="no-events">No upcoming events for {{artistName}}</p>
+    </ng-container>
+  </div>
+</div>
+</div>
