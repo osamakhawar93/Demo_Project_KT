@@ -16,7 +16,7 @@ export class HomeComponent implements OnInit,OnDestroy {
   public errorMessage:string = '';
   public artistsArray= [];
   public searchOptions = [];
-  public subscriptionVar:any;
+  public artistSubscription:any;
   constructor(public bandsApiService:BandsService, public _sharedService: SharedService,) { }
 
   ngOnInit() {
@@ -65,26 +65,27 @@ export class HomeComponent implements OnInit,OnDestroy {
       }else{
         this.getSearchResultsFromApi();
       }
-      this._sharedService.hideLoader(); 
     }else{
       this.noArtistsError = true;
       this.artist = null;
       this.errorMessage = 'Please enter a name in the search field!';
+      this._sharedService.hideLoader(); 
     }
   }
 
   getSearchResultsFromApi = () =>{
-    this.subscriptionVar = this.bandsApiService.fetchArtistsInformation(this.searchInput).subscribe(a=>{
-      console.log(a);
+    this.artistSubscription = this.bandsApiService.fetchArtistsInformation(this.searchInput).subscribe(a=>{
       if(a == ''){
         this.noArtistsError = true;
         this.errorMessage = 'No Artist found!';
         this.artist = null;
+        this._sharedService.hideLoader(); 
       }else{
         this.artist = a;
         this.noArtistsError = false;
         this.errorMessage = '';
         this.artistsArray.push(this.artist);
+        this._sharedService.hideLoader(); 
       }
     })
   }
@@ -97,6 +98,7 @@ export class HomeComponent implements OnInit,OnDestroy {
     if(this.artist == undefined){
       this.getSearchResultsFromApi();
     }
+    this._sharedService.hideLoader(); 
   }
 
   /**
@@ -106,7 +108,12 @@ export class HomeComponent implements OnInit,OnDestroy {
     localStorage.setItem('artists',JSON.stringify(this.artistsArray));
   }
 
+   /**
+   * Unsubscribing to any open subscriptions
+   *  */ 
   ngOnDestroy = () => {
-    this.subscriptionVar.unsubscribe();
+    if(this.artistSubscription && !this.artistSubscription.closed){
+      this.artistSubscription.unsubscribe();
+    } 
   }
 }

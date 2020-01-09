@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { EventsInterface } from '../../interface/events';
 import { BandsService } from 'src/app/services/bands.service';
 import { ActivatedRoute } from '@angular/router';
@@ -9,10 +9,11 @@ import { SharedService } from 'src/app/services/shared.service';
   styleUrls: ['./events.component.scss'],
   providers:[BandsService]
 })
-export class EventsComponent implements OnInit {
+export class EventsComponent implements OnInit,OnDestroy {
   public artistName: string = '';
   public events:EventsInterface[];
   public noEvents:boolean = false;
+  public eventsSubscription:any;
   constructor(public bandsApiService:BandsService,  private route: ActivatedRoute,public _sharedService:SharedService) { }
 
   ngOnInit() {
@@ -22,7 +23,7 @@ export class EventsComponent implements OnInit {
 
   getEventDetailsForUser = (artistName)=>{
     this._sharedService.showLoader(); //Calling Shared Service Method to show global loader
-    this.bandsApiService.fetchEventsForSelectedUser(artistName).subscribe((a)=>{
+    this.eventsSubscription = this.bandsApiService.fetchEventsForSelectedUser(artistName).subscribe((a)=>{
       if(a.length>0){
         this.noEvents = false;
         this.events = a;
@@ -31,5 +32,14 @@ export class EventsComponent implements OnInit {
       }
       this._sharedService.hideLoader(); //Calling Shared Service Method to show global loader
     })
+  }
+
+  /**
+   * Unsubscribing to any open subscriptions
+   *  */ 
+  ngOnDestroy(){
+    if(this.eventsSubscription && !this.eventsSubscription.closed){
+      this.eventsSubscription.unsubscribe();
+    } 
   }
 }

@@ -3,7 +3,7 @@
   <div class="search-box">
     <h3 class="main-head">Search Artists and their upcoming events</h3>
       <div class="search-wrapper">
-          <input type="text" class="" #searchArtistInput (keyup)="enterKeySubmission($event)" placeholder="Search artists" />
+          <input type="text" class="" #searchArtistInput (keyup)="enterKeySubmission($event)" maxlength="30" placeholder="Search artists" />
           <button class="search-btn" (click)="getSearchResults(searchArtistInput.value)">
               <img src="../../../assets/images/search.svg" alt="Search Icon">
           </button>
